@@ -1,47 +1,51 @@
 {
   "project": "model-olympics",
   "state": "PARTIAL",
-  "scenario": "Two concurrent local fixture reads, shared structured-JSON judge, visible 4/4 versus 3/4 results; optional OpenAI-compatible live adapters.",
+  "scenario": "中文双赛道：真实读取本地样例、共同判分、展示 4/4 与 3/4；真实推理未验证。",
   "checks": [
     {
       "id": "build",
       "passed": true,
-      "evidence": "artifacts/build.log"
+      "evidence": "artifacts/zh-build.log"
     },
     {
-      "id": "judge-concurrency-timeout-redaction-5-tests",
+      "id": "7-unit-tests",
       "passed": true,
-      "evidence": "artifacts/test.log"
+      "evidence": "artifacts/zh-test.log"
     },
     {
-      "id": "browser-flow-and-demo-2-tests",
+      "id": "3-e2e-tests",
       "passed": true,
-      "evidence": "artifacts/e2e.log"
+      "evidence": "artifacts/zh-e2e.log"
     },
     {
-      "id": "dedicated-demo-and-1440x810-layout",
+      "id": "demo",
       "passed": true,
-      "evidence": "artifacts/demo.log"
+      "evidence": "artifacts/zh-demo.log"
     },
     {
-      "id": "real-screenshot",
+      "id": "setup",
       "passed": true,
-      "evidence": "artifacts/demo-results.png"
+      "evidence": "artifacts/zh-setup.log"
     },
     {
-      "id": "real-recording",
+      "id": "doctor",
       "passed": true,
-      "evidence": "artifacts/playwright/demo/demo-record-a-real-fixture-showdown/video.webm"
+      "evidence": "artifacts/zh-doctor.log"
     },
     {
-      "id": "two-live-model-inference",
-      "passed": false,
-      "evidence": "README.md"
+      "id": "missing-dependency-diagnostic",
+      "passed": true,
+      "evidence": "artifacts/zh-doctor-missing.log"
     }
   ],
   "commands": [
     {
-      "cmd": "npm install --cache .npm-cache",
+      "cmd": "npm run setup",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run doctor",
       "exitCode": 0
     },
     {
@@ -53,38 +57,24 @@
       "exitCode": 0
     },
     {
-      "cmd": "npm run e2e (initial; browser missing)",
-      "exitCode": 1
-    },
-    {
-      "cmd": "npm run e2e (existing Chromium; FFmpeg missing)",
-      "exitCode": 1
-    },
-    {
-      "cmd": "PLAYWRIGHT_BROWSERS_PATH=\"$PWD/.browser-cache\" npx playwright install chromium (interrupted stalled download)",
-      "exitCode": 130
-    },
-    {
-      "cmd": "PLAYWRIGHT_BROWSERS_PATH=\"$PWD/.browser-cache\" npx playwright install ffmpeg",
-      "exitCode": 0
-    },
-    {
       "cmd": "npm run e2e",
       "exitCode": 0
     },
     {
       "cmd": "npm run demo",
       "exitCode": 0
+    },
+    {
+      "cmd": "node scripts/doctor.mjs --dependency-dir artifacts/不存在的依赖目录",
+      "exitCode": 1
     }
   ],
   "liveModel": false,
   "fixturesUsed": true,
   "demoVideo": "artifacts/playwright/demo/demo-record-a-real-fixture-showdown/video.webm",
   "limitations": [
-    "No real inference or live provider smoke performed; credentials and actual model compatibility remain unverified.",
-    "Fixture timing measures actual local file reads, not model performance.",
-    "One fixed structured-output challenge; not a scientific ranking or code-execution benchmark.",
-    "Costs are N/A; no monetary spend guard. Live runs use 400 output tokens per lane, two requests, 20-second timeout, no retries.",
-    "Validation reused existing macOS Chromium read-only and project-local FFmpeg after a stalled browser download; fresh clones should install matching Playwright Chromium."
+    "真实模型、全新机器浏览器下载、Windows/Linux、最低 Node 版本未实机验证。",
+    "本地样例耗时不是模型性能；费用未计价。",
+    "本机使用已有 Chromium 和项目 FFmpeg；安装脚本不修改系统。"
   ]
 }

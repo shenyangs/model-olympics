@@ -1,28 +1,34 @@
-# A06 — Model Olympics
+# A06 — Model Olympics · 模型对决
 
-Build a truthful, visually dramatic TWO-model live showdown. Read ./AGENTS.md. Your highest priority is REAL provider calls, equal prompt and objective judging — not cosmetic fake races. Implement within 110 minutes.
+## 项目目标
 
-## Stack / constraints
-- React/Vite dashboard, Express backend, provider adapters for available configured models (choose 2 distinct actual model IDs, same provider acceptable). Use only env keys; never expose keys to frontend. Restrict to one fixed benign challenge for first MVP. Exactly same input, temperature if supported, max output budget, timeout and judge for both. Show provider/model IDs.
-- Preferred challenge: generate structured JSON mapping a tiny set of requirements to functions; evaluate against a fixed deterministic JSON schema/test vector. This avoids executing untrusted model-generated code. OPTIONAL actual code-execution round only if a properly isolated Docker runner is working (`--network none`, read-only root, resource/time limits); otherwise explicitly say 'structured-output challenge', not 'unit-tested code benchmark'.
-- Measure wall time via performance.now on server. API tokens from provider actual usage metadata, else N/A. Costs only when public pricing values are manually configured with a dated price source; otherwise N/A. Labels 'one-run exhibition, not scientific model ranking'.
-- Missing two usable model credentials: provide a clearly watermarked REPLAY / LOCAL FIXTURE experience and set status PARTIAL, not PASS for live showdown.
+交付一个诚实可查的双赛道结构化输出演示：相同提示词、相同参数、并发操作、原始结果、确定性判分与真实浏览器验证。中文作为默认界面与文档语言，代码标识和品牌名称保留。
 
-## P0 happy path
-1. Choose one curated challenge; two recognizable lanes with exact model names.
-2. Click RACE. Two requests start concurrently, progress animations derive from emitted real lifecycle/streaming events (show Spinner if no streaming).
-3. Finish with real latency, actual returned result, schema/test pass or fail, real provider usage if available; UI does not invent numbers.
-4. Clear timeout/error state for either provider.
+## 技术与边界
 
-## Must prove
-- Unit test judge receives valid and invalid outputs, scores correctly; test fake provider adapter with deterministic responses and validates two concurrent start timestamps.
-- E2E uses explicitly labelled FIXTURE provider without external credentials and verifies scoring/status. Live-provider smoke only if keys present, with max total spend guard.
-- Demo video may be labelled REPLAY if keys absent. README explains demo vs live and lack of broad benchmark fairness.
+- 使用 TypeScript、React、Vite、Express、Playwright；网页端口 4206，API 端口 5206，均只绑定 127.0.0.1。
+- 只修改当前项目，不读取用户凭据、其他项目数据，不创建子代理或额外对话。
+- 真实适配器仅通过项目环境配置获取密钥，支持两个不同模型 ID；两路共享提示词、temperature=0、400 输出 token 上限、20 秒超时和同一判分器。
+- 第一期仅做需求到函数的 JSON 映射，不运行模型生成代码。
+- 无真实推理时必须显示“本地样例 FIXTURE · 无 AI 推理”，状态为 PARTIAL。禁止把固定样例冒充模型结果。
+- 用服务端单调时钟测量耗时；usage 缺失不估算；费用无可靠配置时不展示虚构数值。
 
-## X hook
-'Two models. Same challenge. Same rules. Watch the race — and inspect the actual outputs.' 0–2s side-by-side; 2–15s simultaneous race; 15–25s measured times + objective outcome.
+## 必须可用的主路径
 
+1. 查看同一条中文提示词，明确三个需求映射与四项检查。
+2. 点击“开始对决”，两路请求并发开始；状态来自真实生命周期事件。
+3. 展示原始输出、耗时、规则得分与每项检查。失败或超时明确提示，可重试。
+4. 零密钥本地样例分别得到 4/4 和 3/4，错误原因可追溯到 R2。
 
-Execute within this directory only. Run npm install, implement, then build/test/e2e/demo. Preserve real logs and status.json.
+## 安装与易用性
 
-This is an authorized independent sprint execution. Start implementing now, no confirmation. Do not spawn subagents. All writes limited to this app directory; use npm install --cache .npm-cache and keep .npm-cache ignored. Existing Playwright browsers may be read from ~/Library/Caches/ms-playwright; if install required use PLAYWRIGHT_BROWSERS_PATH inside this project. Install dependencies, replace starter tests with meaningful behavior tests, run build/test/e2e/demo and preserve actual logs, screenshot and video. Do not read user credentials or other project data. Missing model keys: runnable clearly labelled fixture and PARTIAL status. Add LICENSE. Verify and finish, not merely plan.
+- `npm run setup` 跨平台安装锁文件依赖和缺失浏览器组件，缓存仅在本项目，不改机器设置；允许只读复用已有 Playwright 浏览器。
+- `npm run doctor` 中文诊断 Node、依赖、浏览器、FFmpeg 和端口；不要求无关密钥，缺依赖时说明恢复命令。
+- README 中文为主，说明用途、精确入口、依赖用途、操作系统命令差异、三步演示、失败恢复、真实验证与未验证项。
+- 首次三步引导、中文状态/错误/空态/无障碍标签、小屏布局、可见键盘焦点和忙碌反馈。
+
+## 验收与交付
+
+实际运行 build、test、e2e、demo。单测验证有效/无效判分、并发开始、超时与错误脱敏；浏览器测试验证 UI → API → 真实底层操作 → 结果与自动断言，不削弱断言。保留中文截图、真实录像、日志与初期失败证据于 artifacts，禁止提交缓存、凭据或录像。
+
+更新 status.json，记录 PASS/PARTIAL/BLOCKED/FAIL、检查项、命令退出码、liveModel、fixturesUsed、demoVideo 与限制。保留 MIT 许可证、锁文件和合理忽略规则。完成后仅在独立仓库提交；公开仓库推送由主对话复核后统一执行。
