@@ -1,0 +1,90 @@
+{
+  "project": "model-olympics",
+  "state": "PARTIAL",
+  "scenario": "Two concurrent local fixture reads, shared structured-JSON judge, visible 4/4 versus 3/4 results; optional OpenAI-compatible live adapters.",
+  "checks": [
+    {
+      "id": "build",
+      "passed": true,
+      "evidence": "artifacts/build.log"
+    },
+    {
+      "id": "judge-concurrency-timeout-redaction-5-tests",
+      "passed": true,
+      "evidence": "artifacts/test.log"
+    },
+    {
+      "id": "browser-flow-and-demo-2-tests",
+      "passed": true,
+      "evidence": "artifacts/e2e.log"
+    },
+    {
+      "id": "dedicated-demo-and-1440x810-layout",
+      "passed": true,
+      "evidence": "artifacts/demo.log"
+    },
+    {
+      "id": "real-screenshot",
+      "passed": true,
+      "evidence": "artifacts/demo-results.png"
+    },
+    {
+      "id": "real-recording",
+      "passed": true,
+      "evidence": "artifacts/playwright/demo/demo-record-a-real-fixture-showdown/video.webm"
+    },
+    {
+      "id": "two-live-model-inference",
+      "passed": false,
+      "evidence": "README.md"
+    }
+  ],
+  "commands": [
+    {
+      "cmd": "npm install --cache .npm-cache",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run build",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run test",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run e2e (initial; browser missing)",
+      "exitCode": 1
+    },
+    {
+      "cmd": "npm run e2e (existing Chromium; FFmpeg missing)",
+      "exitCode": 1
+    },
+    {
+      "cmd": "PLAYWRIGHT_BROWSERS_PATH=\"$PWD/.browser-cache\" npx playwright install chromium (interrupted stalled download)",
+      "exitCode": 130
+    },
+    {
+      "cmd": "PLAYWRIGHT_BROWSERS_PATH=\"$PWD/.browser-cache\" npx playwright install ffmpeg",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run e2e",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run demo",
+      "exitCode": 0
+    }
+  ],
+  "liveModel": false,
+  "fixturesUsed": true,
+  "demoVideo": "artifacts/playwright/demo/demo-record-a-real-fixture-showdown/video.webm",
+  "limitations": [
+    "No real inference or live provider smoke performed; credentials and actual model compatibility remain unverified.",
+    "Fixture timing measures actual local file reads, not model performance.",
+    "One fixed structured-output challenge; not a scientific ranking or code-execution benchmark.",
+    "Costs are N/A; no monetary spend guard. Live runs use 400 output tokens per lane, two requests, 20-second timeout, no retries.",
+    "Validation reused existing macOS Chromium read-only and project-local FFmpeg after a stalled browser download; fresh clones should install matching Playwright Chromium."
+  ]
+}

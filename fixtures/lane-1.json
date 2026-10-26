@@ -1,0 +1,1 @@
+{"mappings":[{"requirement":"R1","function":"normalizeEmail"},{"requirement":"R2","function":"hashPassword"},{"requirement":"R3","function":"formatTimestamp"}]}
