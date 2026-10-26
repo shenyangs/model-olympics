@@ -4,6 +4,8 @@
 
 这是一个可在本机运行的结构化 JSON 输出演示。默认不需要 API Key：程序读取两份明确标注的本地固定样例，真实执行同一个判分器，展示 4/4 与 3/4 的差异。可选接入两个真实模型，但本项目目前的交付状态为 **PARTIAL：本地闭环已验证，真实模型推理未验证**。
 
+![完成对决并展开原始输出](docs/images/result.png)
+
 ## 快速开始
 
 需要 **Node.js ^22.12.0 || ^24.0.0 || >=26.0.0、随 Node 安装的 npm（Vitest 5 不支持 Node 23/25）**。本次验证环境为 macOS Apple Silicon、Node.js 26.4.0；Windows/Linux 与最低 Node 版本未实机验证。第一次安装需要网络下载 npm 包；没有可复用浏览器时还需要下载 Chromium 和录像组件 FFmpeg。
@@ -27,35 +29,17 @@ npm ci --cache .npm-cache
 npm run dev
 ```
 
-已有依赖但需手动安装匹配的浏览器时：
-
-macOS / Linux（bash、zsh）：
-
-```sh
-PLAYWRIGHT_BROWSERS_PATH="$PWD/.browser-cache" npx playwright install chromium
-```
-
-Windows PowerShell：
-
-```powershell
-$env:PLAYWRIGHT_BROWSERS_PATH = "$PWD/.browser-cache"
-npx playwright install chromium
-```
-
-Windows cmd：
-
-```bat
-set "PLAYWRIGHT_BROWSERS_PATH=%CD%\.browser-cache"
-npx playwright install chromium
-```
-
-推荐直接使用跨平台 `npm run setup`，无需手动设置以上变量。`npm run demo` 也通过 Node 脚本传递环境变量，不依赖 POSIX 赋值语法。不要使用 `--with-deps`：本项目脚本不安装系统组件。Linux 若提示缺少系统共享库，需在已具备 Chromium 运行依赖的环境运行；此环境准备未自动完成。
+安装和演示脚本通过 Node 运行，Windows PowerShell、cmd 与 macOS/Linux 使用相同的 npm 命令。Linux 仍需具备 Chromium 所需的系统共享库；脚本不会自动安装系统组件。
 
 ## 三步体验（零密钥）
 
 1. 点击 **查看共同提示词**，阅读两路完全相同的中文任务和固定映射。
 2. 点击 **收起共同提示词**，回到双赛道视图。
-3. 点击 **开始对决**，查看样例 A 的 **4/4** 与样例 B 的 **3/4**；后者把 R2 错写为 `hashPassword`，因此 R2 的 `validatePassword` 检查失败。可点击 **再来一轮** 重复运行。
+3. 点击 **开始对决**，查看样例 A 的 **4/4** 与样例 B 的 **3/4**；后者把 R2 错写为 `hashPassword`，因此 R2 的 `validatePassword` 检查失败。点击 **展开原始输出** 可逐字核对错误；点击 **再来一轮** 重复运行。
+
+![准备开始的双赛道计分板](docs/images/overview.png)
+
+以上两张图均来自实际运行的页面。暖白背景下，钴蓝与橙红两条赛道分别呈现得分、耗时和检查结果；原始 JSON 在计分板下方展开。
 
 页面始终标注“本地样例 FIXTURE · 无 AI 推理”。样例来自 `fixtures/`，不是模型实际生成内容，也不是历史模型回放。显示的样例耗时仅为真实文件读取与处理耗时，不能拿来比较模型速度；没有真实 usage 数据时显示“未提供”，费用显示“未计价”。短读取可能在屏幕绘制处理中状态前就已结束，不会插入假等待或伪造事件。
 
@@ -105,14 +89,14 @@ npm run demo
 npm run doctor
 ```
 
-本次中文版本实际执行结果记录于 `status.json`；本地日志在 `artifacts/zh-*.log`。验证覆盖判分、非法 JSON、并发启动、超时隔离、错误脱敏、中文页面真实 API 数据流、重复运行、键盘操作、小屏横向溢出、网络失败提示及 1440×810 演示画面。**没有将接口错误或未验证推理当成模型成功结果**。
+本次计分板改版实际执行结果记录于 `status.json`；本地日志在 `artifacts/redesign-*.log`（安装与缺依赖诊断保留 `zh-*` 日志）。验证覆盖判分、非法 JSON、并发启动、超时隔离、错误脱敏、中文页面真实 API 数据流、重复运行、键盘操作、小屏横向溢出、网络失败提示及 1440×810 演示画面。**没有将接口错误或未验证推理当成模型成功结果**。
 
 - 中文结果截图：`artifacts/zh-demo-results.png`
 - 中文小屏截图：`artifacts/zh-mobile.png`
 - 独立演示录像：`artifacts/playwright/demo/demo-record-a-real-fixture-showdown/video.webm`
 - 缺依赖诊断：`artifacts/zh-doctor-missing.log`，通过 `node scripts/doctor.mjs --dependency-dir artifacts/不存在的依赖目录` 验证预期退出码 1，不改动实际依赖目录。
 
-日志、录像、截图和缓存不提交 Git；独立克隆后运行测试即可重建。此次 `setup` 确实执行了锁文件依赖重装，复用已有 macOS Chromium 和项目 FFmpeg，没有重复下载浏览器。**全新机器从零下载浏览器、Windows/Linux 执行、最低 Node 版本、真实模型调用仍未验证**。历史浏览器/FFmpeg 缺失失败日志也保留在本地 artifacts 中。
+README 引用的两张真实截图提交在 `docs/images/`；其余日志、录像、测试截图和缓存不提交 Git，独立克隆后运行测试即可重建。此次 `setup` 确实执行了锁文件依赖重装，复用已有 macOS Chromium 和项目 FFmpeg，没有重复下载浏览器。**全新机器从零下载浏览器、Windows/Linux 执行、最低 Node 版本、真实模型调用仍未验证**。历史浏览器/FFmpeg 缺失失败日志也保留在本地 artifacts 中。
 
 ## 常见故障与恢复
 

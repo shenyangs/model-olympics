@@ -1,27 +1,27 @@
 {
   "project": "model-olympics",
   "state": "PARTIAL",
-  "scenario": "中文双赛道：真实读取本地样例、共同判分、展示 4/4 与 3/4；真实推理未验证。",
+  "scenario": "JSON 映射赛：暖白双赛道计分板，真实读取本地样例并判分 4/4 与 3/4；真实推理未验证。",
   "checks": [
     {
       "id": "build",
       "passed": true,
-      "evidence": "artifacts/zh-build.log"
+      "evidence": "artifacts/redesign-build.log"
     },
     {
       "id": "7-unit-tests",
       "passed": true,
-      "evidence": "artifacts/zh-test.log"
+      "evidence": "artifacts/redesign-test.log"
     },
     {
       "id": "3-e2e-tests",
       "passed": true,
-      "evidence": "artifacts/zh-e2e.log"
+      "evidence": "artifacts/redesign-e2e.log"
     },
     {
       "id": "demo",
       "passed": true,
-      "evidence": "artifacts/zh-demo.log"
+      "evidence": "artifacts/redesign-demo.log"
     },
     {
       "id": "setup",
@@ -31,7 +31,7 @@
     {
       "id": "doctor",
       "passed": true,
-      "evidence": "artifacts/zh-doctor.log"
+      "evidence": "artifacts/redesign-doctor.log"
     },
     {
       "id": "missing-dependency-diagnostic",
@@ -76,5 +76,14 @@
     "真实模型、全新机器浏览器下载、Windows/Linux、最低 Node 版本未实机验证。",
     "本地样例耗时不是模型性能；费用未计价。",
     "本机使用已有 Chromium 和项目 FFmpeg；安装脚本不修改系统。"
-  ]
+  ],
+  "screenshots": [
+    "docs/images/result.png",
+    "docs/images/overview.png"
+  ],
+  "visualReview": {
+    "desktop": "1440×900 总览与结果截图已检查；1440×810 收起输出时无纵向溢出。",
+    "mobile": "390px 截图已检查，自动断言无横向溢出。",
+    "video": "已检查独立真实演示录像的结果帧。"
+  }
 }
